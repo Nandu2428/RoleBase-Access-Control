@@ -5,15 +5,16 @@ const Details = () => {
     const { id } = useParams();
     const [user, setUser]=useState("");
 
-    const userList = async () => {
-      const userDatails = await fetch("http://localhost:8000/user/"+id);
-      const userData = await userDatails.json();
-      console.log(userData);
-      setUser(userData);
-    };
-    useEffect(() => {
+  const userList = async () => {
+    const userDatails = await fetch("http://localhost:8000/user/" + id);
+    const userData = await userDatails.json();
+    console.log(userData);
+    setUser(userData);
+  }
+    
+  useEffect(() => {
       userList();
-    }, [userList]);
+    });
 
 
     return (

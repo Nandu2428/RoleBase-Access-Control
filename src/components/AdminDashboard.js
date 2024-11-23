@@ -109,12 +109,12 @@ const AdminDashboard = () => {
                         >
                           Remove
                         </button>
-                        <a
+                        <button
                           className="border-2 mr-2 px-3 py-1 rounded-md bg-blue-700 text-white cursor-pointer"
                           onClick={()=>{loadDetails(u.id)}}
                         >
                           View
-                        </a>
+                        </button>
                       </td>
                     </tr>
                   ))}
