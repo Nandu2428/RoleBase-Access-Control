@@ -1,0 +1,18 @@
+{
+  "admin": [
+    {
+      "id": "Nandu",
+      "password": "Nandu4321",
+      "email": "nandu@gmail.com"
+    }
+  ],
+  "user": [
+    {
+      "id": "User1",
+      "password": "user123",
+      "email": "ram@gmail.com",
+      "phnnum": "7653217891",
+      "role": "Adult"
+    }
+  ]
+}
