@@ -1,128 +1,144 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import SearchBar from "./SearchBar";
+import { useAuth } from "../utils/Auth";
+
+
 const AdminDashboard = () => {
-    const [user, setUser] = useState(null);
-    const usenavigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
+  const { logout } = useAuth();
 
-    const loadDetails = (id) => {
-        usenavigate("/details/"+id);
-    }
+  const [user, setUser] = useState(null);
+  const usenavigate = useNavigate();
 
+  const loadDetails = (id) => {
+    usenavigate("/details/" + id);
+  };
 
-    const userList = async() => {
-        const userData = await fetch("http://localhost:8000/user");
+  useEffect(() => {
+    const fetchUserList = async () => {
+      try {
+        const userData = await fetch(`${apiUrl}/user`);
         const users = await userData.json();
-        //console.log(users);
         setUser(users);
+      } catch (err) {
+        alert("Please Try Again");
+      }
+    };
+
+    fetchUserList();
+  }, [apiUrl]); 
+
+
+
+  const deleteHandle = (id) => {
+    if (window.confirm("Do you want to remove?")) {
+      fetch(`${apiUrl}/user/`+ id, {
+        method: "DELETE",
+      })
+        .then((res) => {
+          setUser((prevUsers) => prevUsers.filter((u) => u.id !== id));
+        })
+        .catch((err) => {
+          alert("Please Try Again");
+        });
     }
-    useEffect(() => {
-        userList();
-    }, []);
+  };
 
-
-
-    const deleteHandle = (id) => {
-        if (window.confirm('Do you want to remove?')) {
-            fetch("http://localhost:8000/user/" + id, {
-                method:"DELETE"
-            }).then((res) => {
-                window.location.reload();
-            }).catch((err) => {
-                console.log(err.message);
-            })
-        }
-    }
-
-
-    return (
-      <div>
-        <div className="flex">
-          <div className="ml-3 w-1/5 h-20 border-b-2 border-l-2 border-r-2 shadow-sm">
-            <h1 className="text-violet-600 font-bold p-6 text-xl">
-              Admin Dashboard
-            </h1>
-          </div>
-          <div className="w-4/5 h-20 mx-4  border-b-2 border-l-2 border-r-2 flex justify-between">
-            <div className="m-4">
-              <input
-                className="p-3 border-2 shadow-lg text-black"
-                type="text"
-                placeholder="Search"
-              ></input>
-            </div>
-            <div className="m-6">
-              <Link to="/login" className="font-bold text-md m-6">
-                LogOut
-              </Link>
-            </div>
-          </div>
+  return (
+    <div>
+      <div className="flex flex-col md:flex-row">
+        <div className="ml-3 md:w-1/5 w-full h-20 border-b-2 border-l-2 border-r-2 shadow-sm flex items-center">
+          <h1 className="text-violet-800 font-bold px-6 text-xl text-center md:text-left">
+            Admin Dashboard
+          </h1>
         </div>
-        <div>
-          <div className="flex">
-            <p className="m-5 font-semibold text-xl w-1/5">List Of Users</p>
-            <Link className="my-5 mx-64 text-md font-semibold" to="/create">
-              Add New User(+)
-            </Link>
+        <div className="md:w-4/5 w-full h-20 mx-4 border-b-2 border-l-2 border-r-2 flex items-center justify-between">
+          <div className="flex-grow mx-4">
+            <SearchBar />
           </div>
-          <div>
-            <table className=" m-5 border-collapse border border-gray-200 bg-white shadow-md rounded-lg">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border border-gray-200 px-20 py-3 text-left text-sm font-medium text-gray-700">
-                    UserName
-                  </th>
-                  <th className="border border-gray-200 px-20 py-3 text-left text-sm font-medium text-gray-700">
-                    Email
-                  </th>
-                  <th className="border border-gray-200 px-20 py-3 text-left text-sm font-medium text-gray-700">
-                    Phone Number
-                  </th>
-                  <th className="border border-gray-200 px-20 py-3 text-left text-sm font-medium text-gray-700">
-                    Role
-                  </th>
-                  <th className="border border-gray-200 px-20 py-3 text-left text-sm font-medium text-gray-700">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {user &&
-                  user.map((u) => (
-                    <tr key={u.id}>
-                      <td className="border border-gray-200 px-6 py-3 text-sm text-gray-600">
-                        <b>{u.id}</b>
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3 text-sm text-gray-600">
-                        {u.email}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3 text-sm text-gray-600">
-                        {u.phnnum}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3 text-sm text-gray-600">
-                        {u.role}
-                      </td>
-                      <td className="border border-gray-200 px-6 text-sm text-gray-600">
-                        <button
-                          className="border-2 mr-2 p-1 rounded-md bg-red-600 text-white"
-                          onClick={() => deleteHandle(u.id)}
-                        >
-                          Remove
-                        </button>
-                        <button
-                          className="border-2 mr-2 px-3 py-1 rounded-md bg-blue-700 text-white cursor-pointer"
-                          onClick={()=>{loadDetails(u.id)}}
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+          <div className="mr-6">
+            <button
+              onClick={logout}
+              className="font-semibold text-md text-white bg-violet-800 hover:bg-violet-900  py-2 px-4 rounded-md transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              LogOut
+            </button>
           </div>
         </div>
       </div>
-    );
-}
+
+      <div>
+        <div className="flex flex-wrap justify-center items-center">
+          <p className="m-5 font-bold text-xl md:text-2xl">List Of Users</p>
+        </div>
+        <Link
+          className="ml-11 border-2 rounded-md p-3 text-white bg-green-600 hover:bg-green-700"
+          to="/create"
+          state={{ fromAdmin: true }}
+        >
+          Add New User(+)
+        </Link>
+        <div className="overflow-x-auto">
+          <table className="m-5 border-collapse border border-gray-200 bg-white shadow-md rounded-lg w-full">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="border border-gray-200 px-6 md:px-14 py-3 text-xs md:text-sm font-medium text-gray-700">
+                  UserName
+                </th>
+                <th className="border border-gray-200 px-6 md:px-20 py-3 text-xs md:text-sm font-medium text-gray-700">
+                  Email
+                </th>
+                <th className="border border-gray-200 px-6 md:px-12 py-3 text-xs md:text-sm font-medium text-gray-700">
+                  Phone Number
+                </th>
+                <th className="border border-gray-200 px-6 md:px-9 py-3 text-xs md:text-sm font-medium text-gray-700">
+                  Role
+                </th>
+                <th className="border border-gray-200 px-6 md:px-16 py-3 text-xs md:text-sm font-medium text-gray-700">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {user &&
+                user.map((u) => (
+                  <tr key={u.id}>
+                    <td className="border border-gray-200 px-4 md:px-6 py-3 text-xs md:text-sm text-gray-600">
+                      <b>{u.id}</b>
+                    </td>
+                    <td className="border border-gray-200 px-4 md:px-6 py-3 text-xs md:text-sm text-gray-600">
+                      {u.email}
+                    </td>
+                    <td className="border border-gray-200 px-4 md:px-6 py-3 text-xs md:text-sm text-gray-600">
+                      {u.phnnum}
+                    </td>
+                    <td className="border border-gray-200 px-4 md:px-6 py-3 text-xs md:text-sm text-gray-600">
+                      {u.role}
+                    </td>
+                    <td className="border border-gray-200 px-4 md:px-6 text-xs md:text-sm text-gray-600">
+                      <button
+                        className="border-2 mr-2 mb-2 md:mb-0 p-1 md:p-2 rounded-md bg-red-600 text-white"
+                        onClick={() => deleteHandle(u.id)}
+                      >
+                        Remove
+                      </button>
+                      <button
+                        className="border-2 px-2 md:px-3 py-1 md:py-2 rounded-md bg-blue-700 text-white cursor-pointer"
+                        onClick={() => loadDetails(u.id)}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default AdminDashboard;

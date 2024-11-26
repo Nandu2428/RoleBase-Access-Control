@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Back_img from "../Images/Back_img.jpg";
+import { useAuth } from "../utils/Auth";
+
+
 
 const Login = () => {
+  const { login } = useAuth();
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,37 +21,36 @@ const Login = () => {
   const ProceedLogin = async (e) => {
     e.preventDefault();
     if (validate()) {
-        const adminCheck = await fetch("http://localhost:8000/admin?id=" + userName);
+        const adminCheck = await fetch(`${apiUrl}/admin?id=${userName}`);
         const adminData = await adminCheck.json();
-        if (adminData.length>0) {
-          if (adminData[0].password === password) {
-            sessionStorage.setItem("userName", adminData[0].id);
-            sessionStorage.setItem("userrole", "admin");
-            usenavigate("/adminDashboard");
-          }
-          else {
-            alert("Password is incorrect");
+      if (adminData.length > 0) {
+        if (adminData[0].password === password) {
+          localStorage.setItem("auth", JSON.stringify({ role: "admin", id: adminData[0].id }));
+          login();
+          usenavigate("/adminDashboard");
+        }
+        else {
+          alert("Password is incorrect");
+        }
+      }
+      else {
+        const userCheck = await fetch(`${apiUrl}/user?id=${userName}`);
+        const userData = await userCheck.json();
+        
+        if (userData.length > 0) {
+          if (userData[0].password === password) {
+            sessionStorage.setItem("userName", userData[0].id);
+            sessionStorage.setItem("userrole", "user");
+            login();
+            usenavigate("/userLogin/" + userName);
           }
         }
         else {
-          const userCheck = await fetch("http://localhost:8000/user?id=" + userName);
-          const userData = await userCheck.json();
-          if (userData.length > 0) {
-            
-             if (userData[0].password === password) {
-               sessionStorage.setItem("userName", userData[0].id);
-               sessionStorage.setItem("userrole", "user");
-               usenavigate("/userLogin");
-             }
-          }
-          else {
-            alert("Wrong Credentials");
-          }
+          alert("Wrong Credentials");
+        }
+       
       }
       
-
-
-
 
     }
     };
@@ -62,49 +67,64 @@ const Login = () => {
     }
     return result;
   };
+
   return (
-   <div className="p-4 max-w-md mx-auto mt-16">
-      <h1 className="text-2xl font-bold mb-4 text-gray-700">Login</h1>
-      <form onSubmit={ProceedLogin} className="space-y-4">
+    <div>
+      <div className="absolute">
+        <img
+          src={Back_img}
+          alt="background-image"
+          className="h-screen object-cover md:w-screen backdrop-blur"
+        />
+        <div className="absolute inset-0 bg-black/70"></div>
+      </div>
+      <form
+        onSubmit={ProceedLogin}
+        className="mx-64 my-44 absolute bg-black rounded-lg bg-opacity-75 md:w-4/12 px-12 pt-5 pb-8 my-36 mx-auto right-0 left-0"
+      >
+        <h1 className="font-bold text-3xl px-2 pb-6 text-white">Sign In</h1>
         <div>
-          <label className="block text-sm font-medium text-gray-700">UserName</label>
+          <label className="block text-sm font-medium mb-2 text-white">UserName</label>
           <input
             type="text"
-            name="email"
             value={userName}
-            onChange={(e)=>setUserName(e.target.value)}
+            onChange={(e) => setUserName(e.target.value)}
             placeholder="Enter your UserName"
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 mb-2"
             required
           />
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Password</label>
+          <label className="block text-sm font-medium mb-2 text-white">Password</label>
           <input
             type="password"
-            name="password"
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            className="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             required
           />
         </div>
 
         <div className="flex">
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
-        >
-          Login
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+          >
+            Login
           </button>
 
-          <Link className="ml-6 w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-500 transition" to="/register">New User</Link>
-          </div>
+          <Link
+            className="ml-6 w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-500 transition"
+            to="/register"
+          >
+            New User
+          </Link>
+        </div>
       </form>
-      </div>
+    </div>
   );
 };
 

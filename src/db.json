@@ -9,10 +9,59 @@
   "user": [
     {
       "id": "User1",
-      "password": "user123",
-      "email": "ram@gmail.com",
-      "phnnum": "7653217891",
+      "name": "Anusha",
+      "password": "Anu@1234",
+      "email": "anusha@gmail.com",
+      "phnnum": "9987658934",
       "role": "Adult"
+    },
+    {
+      "id": "User2",
+      "name": "Balu",
+      "password": "Balu@1234",
+      "email": "balu@gmail.com",
+      "phnnum": "7689356728",
+      "role": "Adult"
+    },
+    {
+      "id": "User3",
+      "name": "Sachin",
+      "password": "Sachin@1234",
+      "email": "sachin@gmail.com",
+      "phnnum": "8796734568",
+      "role": "children"
+    },
+    {
+      "id": "User4",
+      "name": "Vignesh",
+      "password": "Vignesh@1234",
+      "email": "vignesh@gmail.com",
+      "phnnum": "9287345619",
+      "role": "children"
+    },
+    {
+      "id": "User5",
+      "name": "Aswini",
+      "password": "Aswini@123",
+      "email": "aswini@gmail.com",
+      "phnnum": "9823147893",
+      "role": "children"
+    },
+    {
+      "id": "User6",
+      "name": "Satish",
+      "password": "Satish@123",
+      "email": "satish@gmail.com",
+      "phnnum": "7689245671",
+      "role": "children"
+    },
+    {
+      "id": "User7",
+      "name": "Ramu",
+      "password": "Ramu@123",
+      "email": "ramu@gmail.com",
+      "phnnum": "9823147863",
+      "role": "children"
     }
   ]
 }
